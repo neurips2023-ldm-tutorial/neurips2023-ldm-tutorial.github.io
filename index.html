@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+  <meta name="keywords" content="neurips, tutorial, neurips-2023, neurips2022, computer vision, latent diffusion, latent diffusion models, ldms, machine learning, generative learning, diffusion, denoising, denoising diffusion, score-based, score function">
+
+  <link rel="shortcut icon" href="./img/neurips_logo.png">
+
+
+
+  <title>Latent Diffusion Models: Is the Generative AI Revolution Happening in Latent Space?</title>
+  <meta name="description" content="Tutorial in Conjunction with NeurIPS 2023 ---">
+
+  <!--Open Graph Related Stuff-->
+  <meta property="og:title" content="Latent Diffusion Models: Is the Generative AI Revolution Happening in Latent Space?"/>
+  <meta property="og:url" content="https://neurips2023-ldm-tutorial.github.io"/>
+  <meta property="og:description" content="Tutorial in Conjunction with NeurIPS 2023"/>
+  <meta property="og:site_name" content="Latent Diffusion Models: Is the Generative AI Revolution Happening in Latent Space?"/>
+  <meta property="og:image" content="https://neurips2023-ldm-tutorial.github.io/img/ldm_thumbnail.png"/>
+  <meta property="og:image:url" content="https://neurips2023-ldm-tutorial.github.io/img/ldm_thumbnail.png"/>
+
+  <!--Twitter Card Stuff-->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:creator" content="@karsten_kreis">
+  <meta name="twitter:title" content="Latent Diffusion Models: Is the Generative AI Revolution Happening in Latent Space?"/>
+  <meta name="twitter:image" content="https://neurips2023-ldm-tutorial.github.io/img/ldm_thumbnail.png">
+  <meta name="twitter:url" content="https://neurips2023-ldm-tutorial.github.io/"/>           
+  <meta name="twitter:description" content="Tutorial in Conjunction with NeurIPS 2023"/>
+
+  <!-- CSS  -->
+  <link rel="stylesheet" type="text/css" href="./css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="./css/main.css?1" media="screen,projection">
+
+  <!-- Font Awesome -->
+  <script src="https://kit.fontawesome.com/ff6e9b10da.js" crossorigin="anonymous"></script>
+</head>
+
+  <body>
+
+    <!-- <div class="top-strip"></div> -->
+<div class="navbar navbar-default navbar-fixed-top">
+  <div class="container">
+
+    <div class="navbar-header">
+      <a class="navbar-brand" href="/"></a>
+      <button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#navbar-main">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+
+    <div class="navbar-collapse collapse" id="navbar-main">
+      <ul class="nav navbar-nav">
+		<li><a href="#speakers">Speakers</a></li>
+        <li><a href="#talks">Schedule</a></li>
+        <li><a href="#panelists">Panelists</a></li>
+        <li><a href="#organizers">About Us</a></li>
+      </ul>
+    </div>
+
+  </div>
+</div>
+
+
+    <div class="container">
+      <div class="page-content">
+          <p><br /></p>
+<div class="row">
+  <div class="col-xs-12">
+  <center><h2><b>NeurIPS 2023 Tutorial:</b></h2></center><br>
+    <center><h1>Latent Diffusion Models: <br> Is the Generative AI Revolution Happening in Latent Space?</h1></center><br>
+        <center><h2><i><b>Date</b>: Monday, December 11, 2023, New Orleans</i><h2>
+        <!--
+        <font color="#76b900"><b><a target="_blank" href="https://www.youtube.com/watch?v=n0p1zz0ZFiY">Live Session Recording</a></b></font></center> 
+        <center><b>Time slot 2</b>: <strike>Sunday 23 August, 6:30 am - 8:00 am (PDT)</strike>, <font color="#76b900"><b><a target="_blank" href="https://www.youtube.com/watch?v=mYD783Z-wb8">Live Session Recording</a></b></font></center>
+        <center>ECCV 2020 <font color="#76b900"> <b><a target="_blank" href="https://workshopsandtutorials.eccv2020.eu/papers/category/tutorial-sunday-aug-23/new-frontiers-for-learning-with-limited-labels-or-data/">Microsite</a></b></font>, Pre-recorded talks: Youtube <font color="#76b900"><b><a target="_blank" href="https://www.youtube.com/playlist?list=PLDEjP3Cd-gys9TC1RuboblGzwfsaJ9FxU">Playlist</a></b></font>, Bilibili <font color="#76b900"><b><a target="_blank" href="https://www.bilibili.com/read/cv7268682?share_source=copy_link&amp;share_medium=iphone&amp;bbid=Z34AB836729C35E84416ACBF44A761007D7D&amp;ts=1598042304">Playlist</a></b></font>
+        -->
+        </center>
+  </div>
+</div>
+
+<center>
+<br>
+<a>
+    <img width="300px" src="./img/neurips_logo.png" />
+</a>
+<br>
+<br>
+<br>
+<a>
+    <img src="./img/ldm_figure.png" />
+</a>
+</center>
+
+<!-- <br>
+<p style="color:red;text-align:center">
+<b> &#x1F4E2; &#x1F3A5; Check <a href="https://drive.google.com/file/d/1DYHDbt1tSl9oqm3O333biRYzSCOtdtmn/view?usp=sharing">this Google drive link</a> for our tutorial slides and this <a href="https://www.youtube.com/watch?v=cS6JQpEY9cs">YouTube link</a> for the video recording.</b>
+</p>
+<br> -->
+
+<br>
+<h2>Overview</h2>
+<br/>
+<p>Diffusion models have emerged as a powerful class of generative models and demonstrated astonishing results, in particular in image synthesis. However, training high-resolution diffusion models in pixel space can be highly expensive. Overcoming these limitations, <i><b>Latent Diffusion Models (LDMs)</b></i> first map high-resolution data into a compressed, typically lower-dimensional latent space using an autoencoder, and then train a diffusion model in that latent space more efficiently. Thereby, LDMs enable high-quality image synthesis while avoiding excessive compute demands. Furthermore, the LDM paradigm with an autoencoder that can be tailored to specific problems and data and a separate diffusion model in latent space offers significant flexibility with respect to architecture and model design. This has allowed LDMs to be successfully extended to various tasks beyond image generation, such as video synthesis, 3D object and scene generation, languange modeling, and more. Most prominently, the well-known text-to-image model Stable Diffusion leverages the LDM framework. LDMs have become very popular and widely used in the generative modeling literature.
+</p>
+<p>
+In this tutorial, we aim to provide an introduction to LDMs. While the literature on diffusion models has become broad, the LDM paradigm stands out as a particularly powerful approach due to its flexibility and excellent trade-off with respect to performance and compute demands. We aim to present a tutorial on LDMs that will benefit researchers interested in efficient and flexible, yet expressive generative modeling frameworks. We will also highlight advanced techniques for accelerated sampling and controllability, and discuss various applications of LDMs beyond image synthesis. Moreover, a panel discussion will provide diverse perspectives on this dynamic field and offer an outlook for future research on LDMs.
+</p>
+<br id="speakers" /><br/>
+
+
+<div class="row">
+  <div class="col-xs-12">
+    <h2>Speakers</h2><br>
+  </div>
+</div>
+<div class="row">
+  <div class="col-xs-12">
+
+
+  <div class="row">
+    <div class="col-xs-4" id="karsten">
+      <center>
+      <a href="https://karstenkreis.github.io/">
+        <img class="people-pic" src="./img/people/karsten.jpg" />
+      </a>
+      <div class="people-name">
+        <a href="https://karstenkreis.github.io/">Karsten Kreis</a>
+        <h6>NVIDIA</h6>
+      </div>
+    </center>
+    </div>
+    <div class="col-xs-4" id="ruiqi">
+      <center>
+      <a href="https://ruiqigao.github.io/">
+        <img class="people-pic" src="./img/people/ruiqi.png" />
+      </a>
+      <div class="people-name">
+        <a href="https://ruiqigao.github.io/">Ruiqi Gao</a>
+        <h6>Google Deepmind</h6>
+      </div>
+    </center>
+    </div>
+    <div class="col-xs-4" id="arash">
+      <center>
+      <a href="http://arashvahdat.com">
+        <img class="people-pic" src="./img/people/arash.jpg" />
+      </a>
+      <div class="people-name">
+         <a href="http://arashvahdat.com">Arash Vahdat</a>
+        <h6>NVIDIA</h6>
+      </div>
+    </center>
+    </div>
+  </div>
+
+  <div class="row">
+	<center>
+	    <img src="./img/nvidia_logo.png" style="width:30%" />
+	    <img src="./img/googledeepmind_logo.png" style="width:30%" />
+	</center>
+  </div>
+
+<br id="talks" />
+<br>
+<br>
+
+<div class="row">
+  <div class="col-xs-12">
+     <h2>Schedule</h2>
+     <table class="table schedule" style="border:none !important;">
+      <thead class="thead-light">
+        <tr>
+        <th>Title</th>
+        <th>Speaker</th>
+<!--         <th>Time (CDT)</th> -->
+        <th>Duration</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <tr>
+            <td><b>Part (1): Introduction to Latent Diffusion Models</b><br>Diffusion models, autoencoding, compression, latent diffusion, architectures, image generation</td>
+            <td><a href="https://karstenkreis.github.io/">Karsten Kreis</a></td>
+            <td>40 minutes</td>
+        </tr>
+
+        <tr>
+            <td><b>Part (2): Advanced Design and Controllability</b><br>End-to-end training, maximum likelihood, accelerated sampling, distillation, control and editing</td>
+            <td><a href="http://arashvahdat.com">Arash Vahdat</a></td>
+            <td>40 minutes</td>
+        </tr>
+
+        <tr>
+            <td><b>Part (3): Latent Diffusion Models beyond Image Generation</b><br>Video generation, 3D object and scene synthesis, segmentation, language & molecule generation</td>
+            <td><a href="https://ruiqigao.github.io/">Ruiqi Gao</a></td>
+            <td>40 minutes</td>
+        </tr>
+
+        <tr>
+            <td><b>Part (4): Panel Discussion</b></td>
+            <td></td>
+            <td>30 minutes</td>
+        </tr>
+
+<!--         <tr>
+          <td><b>Coffee Break</b></td>
+          <td> - </td>
+          <td><b>10:00 - 10:30</b></td>
+        </tr>
+
+        <tr>
+            <td>Part (3): Advanced Techniques: Accelerated Sampling, Conditional Generation, and Beyond</td>
+            <td><a href="https://ruiqigao.github.io/">Ruiqi Gao</a></td>
+            <td>10:30 - 11:15</td>
+        </tr>
+
+        <tr>
+            <td>Applications (1): Image Synthesis, Text-to-Image, Controllable and Semantic Generation</td>
+            <td><a href="https://ruiqigao.github.io/">Ruiqi Gao</a></td>
+            <td>11:15 - 11:30</td>
+        </tr>
+
+        <tr>
+            <td>Applications (2): Image Editing, Image-to-Image, Superresolution, Segmentation</td>
+            <td><a href="http://arashvahdat.com">Arash Vahdat</a></td>
+            <td>11:30 - 11:45</td>
+        </tr>
+
+        <tr>
+            <td>Applications (3): Discrete State Models, 3D Generation, Medical Imaging, Video Synthesis</td>
+            <td><a href="https://karstenkreis.github.io/">Karsten Kreis</a></td>
+            <td>11:45 - 12:00</td>
+        </tr>
+
+        <tr>
+            <td>Conclusions, Open Problems and Final Remarks</td>
+            <td><a href="http://arashvahdat.com">Arash Vahdat</a></td>
+            <td>12:00 - 12:10</td>
+        </tr> -->
+
+
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<br id="panelists" />
+
+<div class="row">
+  <div class="col-xs-12">
+    <h2>Panelists</h2><br>
+  </div>
+</div>
+<div class="row">
+  <div class="col-xs-12">
+
+
+  <div class="row">
+    <div class="col-xs-4" id="durk">
+      <center>
+      <a href="http://www.dpkingma.com/">
+        <img class="people-pic" src="./img/people/durkkingma.jpg" />
+      </a>
+      <div class="people-name">
+        <a href="http://www.dpkingma.com/">Durk Kingma</a>
+        <h6>Google Deepmind</h6>
+      </div>
+    </center>
+    </div>
+    <div class="col-xs-4" id="tali">
+      <center>
+      <a href="https://www.weizmann.ac.il/math/dekel/">
+        <img class="people-pic" src="./img/people/talidekel.jpg" />
+      </a>
+      <div class="people-name">
+        <a href="https://www.weizmann.ac.il/math/dekel/">Tali Dekel</a>
+        <h6>Weizmann Institute of Science</h6>
+      </div>
+    </center>
+    </div>
+    <div class="col-xs-4" id="robin">
+      <center>
+      <a href="https://twitter.com/robrombach">
+        <img class="people-pic" src="./img/people/robinrombach.png" />
+      </a>
+      <div class="people-name">
+        <a href="https://scholar.google.com/citations?user=ygdQhrIAAAAJ&hl=en">Robin Rombach</a>
+        <h6>Stability AI</h6>
+      </div>
+    </center>
+    </div>
+  </div>
+  </div>
+</div>
+<br>
+<div class="row">
+  <div class="col-xs-12">
+  <div class="row">
+    <div class="col-xs-6" id="chenlin">
+      <center>
+      <a href="https://cs.stanford.edu/~chenlin/">
+        <img class="people-pic" src="./img/people/chenlinmeng.png" />
+      </a>
+      <div class="people-name">
+        <a href="https://cs.stanford.edu/~chenlin/">Chenlin Meng</a>
+        <h6>Stanford University</h6>
+      </div>
+    </center>
+    </div>
+     <div class="col-xs-6" id="ying nian">
+      <center>
+      <a href="http://www.stat.ucla.edu/~ywu/">
+        <img class="people-pic" src="./img/people/yingnianwu.jpg" />
+      </a>
+      <div class="people-name">
+        <a href="http://www.stat.ucla.edu/~ywu/">Ying Nian Wu</a>
+        <h6>University of California, Los Angeles</h6>
+      </div>
+    </center>
+    </div>
+  </div>
+
+<br id="organizers" />
+<br>
+<br>
+<br>
+
+<div class="row">
+  <div class="col-xs-12">
+    <h2>About Us</h2>
+  </div>
+</div>
+
+<div class="row speaker" id="karsten">
+  <div class="col-sm-3 speaker-pic">
+    <a href="https://karstenkreis.github.io/">
+      <img class="people-pic" src="./img/people/karsten.jpg" />
+    </a>
+    <div class="people-name">
+      <a href="https://karstenkreis.github.io/">Karsten Kreis</a> <a href="https://twitter.com/karsten_kreis"><img src="./img/Twitter_Social_Icon_Rounded_Square_Color.png" /></a>
+      <h6>NVIDIA</h6>
+    </div>
+  </div>
+  <div class="col-md-9">
+    <p class="speaker-bio">
+    Karsten Kreis is a senior research scientist at NVIDIA's Toronto AI Lab. Prior to NVIDIA, he worked at D-Wave Systems and co-founded Variational AI, a startup utilizing generative models for drug discovery. Karsten is trained as a physicist and did his Ph.D. at the Max Planck Institute for Polymer Research. Currently, Karsten’s research focuses on developing novel generative learning methods, and on applying deep generative models in areas such as computer vision, graphics and digital artistry, as well as in the natural sciences. Karsten has worked on diffusion models and latent diffusion models for image, video, texture, geometry, and 3D scene synthesis.
+    <!-- Karsten Kreis is a senior research scientist at NVIDIA’s Toronto AI Lab. Prior to joining NVIDIA, he worked on deep generative modeling at D-Wave Systems and co-founded Variational AI, a startup utilizing generative models for drug discovery. Before switching to deep learning, Karsten did his M.Sc. in quantum information theory at the Max Planck Institute for the Science of Light and his Ph.D. in computational and statistical physics at the Max Planck Institute for Polymer Research. Currently, Karsten's research focuses on developing novel generative learning methods as well as on applying deep generative models on problems in areas such as computer vision, graphics and digital artistry. -->
+    </p>
+  </div>
+</div>
+
+
+
+
+<div class="row speaker" id="ruiqi">
+  <div class="col-sm-3 speaker-pic">
+    <a href="https://ruiqigao.github.io/">
+      <img class="people-pic" src="./img/people/ruiqi.png" />
+    </a>
+    <div class="people-name">
+      <a href="https://ruiqigao.github.io/">Ruiqi Gao</a> <a href="https://twitter.com/RuiqiGao"><img src="./img/Twitter_Social_Icon_Rounded_Square_Color.png" /></a>
+      <h6>Google Deepmind</h6>
+    </div>
+  </div>
+  <div class="col-md-9">
+    <p class="speaker-bio">
+    	Ruiqi Gao is a research scientist at Google Deepmind. Her research interests are in statistical modeling and learning, with a focus on generative models and representation learning. She received her Ph.D. degree in statistics from the University of California, Los Angeles (UCLA) in 2021 advised by Song-Chun Zhu and Ying Nian Wu. Her recent research themes include scalable training and inference algorithms of deep generative models, and their applications in computer vision, natural language processing and neuroscience. Ruiqi has worked on diffusion models and latent diffusion models for image and video generation.
+<!-- Ruiqi Gao is a research scientist at Google Research, Brain team. Her research interests are in statistical modeling and learning, with a focus on generative models and representation learning. She received her Ph.D. degree in statistics from the University of California, Los Angeles (UCLA) in 2021 working in the Center for Vision,
+Cognition, Learning, and Autonomy (VCLA), advised by Song-Chun Zhu and Ying Nian Wu. Her recent research themes include scalable training algorithms of deep generative models and applications in computer vision, natural language processing and neuroscience. -->
+    </p>
+  </div>
+</div>
+
+
+
+<div class="row speaker" id="arash">
+  <div class="col-sm-3 speaker-pic">
+    <a href="http://latentspace.cc/arash_vahdat/">
+      <img class="people-pic" src="./img/people/arash.jpg" />
+    </a>
+    <div class="people-name">
+      <a href="http://latentspace.cc/arash_vahdat/">Arash Vahdat</a> <a href="https://twitter.com/ArashVahdat"><img src="./img/Twitter_Social_Icon_Rounded_Square_Color.png" /></a>
+      <h6>NVIDIA</h6>
+    </div>
+  </div>
+  <div class="col-md-9">
+    <p class="speaker-bio">
+	Arash Vahdat is a senior research manager at NVIDIA Research where he leads the generative AI team. Before NVIDIA, he was a researcher at D-Wave Systems, working on generative learning and its applications in label-efficient training. Before D-Wave, Arash was a research faculty member at Simon Fraser University, where he led computer vision research and taught master courses on machine learning for big data. Arash's current research areas include generative learning, representation learning, and efficient learning. Arash has worked on latent diffusion models for images, text, 3D data, semantic segmentation, and inverse problems.
+<!--     Arash Vahdat is a principal research scientist at NVIDIA research specializing in computer vision and machine learning. Before joining NVIDIA, he was a research scientist at D-Wave Systems where he worked on deep generative learning and weakly supervised learning. Prior to D-Wave, Arash was a research faculty member at Simon Fraser University (SFU), where he led research on deep video analysis and taught graduate-level courses on machine learning for big data. Arash obtained his Ph.D. and M.Sc. from SFU under Greg Mori’s supervision working on latent variable frameworks for visual analysis. His current areas of research include deep generative learning, weakly supervised learning, efficient neural networks, and probabilistic deep learning. -->
+    </p>
+  </div>
+</div>
+
+
+
+
+
+<br />
+</div></div>
+
+      </div>
+    </div>
+                <div class="section text-gray" id="footer">
+                <div class="container">
+
+                    <div class="row">
+                       <div class="col-sm-5">
+                        </div>
+                        <div class="col-sm-7">
+                            <p><small>&copy; 2023 Karsten Kreis, Ruiqi Gao, Arash Vahdat.
+                            Template by <a href="https://nvlabs.github.io/eccv2020-limited-labels-data-tutorial/" class="external"> Shalini De Mello</a>.</small></p>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+
+    <script type="text/javascript" src="/static/js/jquery.min.js"></script>
+    <script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
+  </body>
+</html>
